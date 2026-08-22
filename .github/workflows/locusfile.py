@@ -7,32 +7,26 @@ class TaskManagerUser(HttpUser):
     wait_time = between(1, 3)
 
     def on_start(self):
-        """Setup - called when a user starts"""
         self.task_ids = []
 
     @task(3)
     def view_homepage(self):
-        """Test loading the homepage"""
         self.client.get("/")
 
     @task(2)
     def check_health(self):
-        """Test health endpoint"""
         self.client.get("/api/health")
 
     @task(2)
     def get_stats(self):
-        """Test stats endpoint"""
         self.client.get("/api/stats")
 
     @task(5)
     def list_tasks(self):
-        """Test listing tasks"""
         self.client.get("/api/tasks")
 
     @task(3)
     def create_task(self):
-        """Test creating a new task"""
         priorities = ["low", "medium", "high"]
         task_data = {
             "title": f"Load Test Task {random.randint(1000, 9999)}",
@@ -51,14 +45,12 @@ class TaskManagerUser(HttpUser):
 
     @task(2)
     def get_specific_task(self):
-        """Test getting a specific task"""
         if self.task_ids:
             task_id = random.choice(self.task_ids)
             self.client.get(f"/api/tasks/{task_id}")
 
     @task(2)
     def update_task(self):
-        """Test updating a task"""
         if self.task_ids:
             task_id = random.choice(self.task_ids)
             update_data = {
@@ -74,14 +66,12 @@ class TaskManagerUser(HttpUser):
 
     @task(1)
     def delete_task(self):
-        """Test deleting a task"""
         if self.task_ids:
             task_id = self.task_ids.pop()
             self.client.delete(f"/api/tasks/{task_id}")
 
     @task(2)
     def filter_tasks(self):
-        """Test filtering tasks"""
         filters = [
             "?completed=true",
             "?completed=false",
@@ -96,7 +86,6 @@ class TaskManagerUser(HttpUser):
 
     @task(1)
     def load_static_files(self):
-        """Test loading static files"""
         static_files = ["/static/style.css", "/static/script.js"]
 
         for file_path in static_files:
