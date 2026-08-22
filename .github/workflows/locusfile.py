@@ -3,6 +3,7 @@ import random
 
 from locust import HttpUser, between, task
 
+
 class TaskManagerUser(HttpUser):
     wait_time = between(1, 3)
 
@@ -28,18 +29,25 @@ class TaskManagerUser(HttpUser):
     @task(3)
     def create_task(self):
         priorities = ["low", "medium", "high"]
+
         task_data = {
             "title": f"Load Test Task {random.randint(1000, 9999)}",
-            "description": f"This is a task created during load testing at {random.randint(1, 100)}%",
+            "description": (
+                f"This is a task created during load testing at "
+                f"{random.randint(1, 100)}%"
+            ),
             "priority": random.choice(priorities),
         }
 
         response = self.client.post(
-            "/api/tasks", json=task_data, headers={"Content-Type": "application/json"}
+            "/api/tasks",
+            json=task_data,
+            headers={"Content-Type": "application/json"},
         )
 
         if response.status_code == 200:
             task_id = response.json().get("id")
+
             if task_id:
                 self.task_ids.append(task_id)
 
@@ -53,6 +61,7 @@ class TaskManagerUser(HttpUser):
     def update_task(self):
         if self.task_ids:
             task_id = random.choice(self.task_ids)
+
             update_data = {
                 "completed": random.choice([True, False]),
                 "priority": random.choice(["low", "medium", "high"]),
@@ -86,7 +95,10 @@ class TaskManagerUser(HttpUser):
 
     @task(1)
     def load_static_files(self):
-        static_files = ["/static/style.css", "/static/script.js"]
+        static_files = [
+            "/static/style.css",
+            "/static/script.js",
+        ]
 
         for file_path in static_files:
             self.client.get(file_path)
