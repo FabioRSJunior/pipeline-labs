@@ -3,7 +3,6 @@ import random
 
 from locust import HttpUser, between, task
 
-
 class TaskManagerUser(HttpUser):
     wait_time = between(1, 3)
 
